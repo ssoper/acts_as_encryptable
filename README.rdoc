@@ -33,4 +33,5 @@ Encrypt your data
 Decrypt your data
   card = CreditCard.last
   card.decrypt!
-  => { :first_mame => 'Test', :last_name => 'User', :number => '1234567890' }
+  => { :first_name => 'Test', :last_name => 'User', :number => '1234567890' }
+
