@@ -1,0 +1,36 @@
+= Acts As Encryptable
+
+Encrypt and decrypt your data with ease.
+
+
+== Installation
+
+Run this if the gem isn't installed already
+  sudo gem install ssoper-acts_as_encryptable --source=http://gems.github.com
+
+Or place in your environment.rb
+  config.gem 'ssoper-acts_as_encryptable', :source => 'http://gems.github.com'
+  
+After installing be sure to generate the migration for the EncryptedChunk model
+  ./script/generate migration acts_as_encryptable_migration
+
+
+== Usage
+
+In your model
+  class CreditCard < ActiveRecord::Base
+    acts_as_encryptable :first_name, :last_name, :number
+    attr_accessor :first_name, :last_name, :number
+  end
+
+Encrypt your data
+  card = CreditCard.new
+  card.first_name = 'Test'
+  card.last_name = 'User'
+  card.number = '1234567890'
+  card.save
+  
+Decrypt your data
+  card = CreditCard.last
+  card.decrypt!
+  => { :first_mame => 'Test', :last_name => 'User', :number => '1234567890' }
