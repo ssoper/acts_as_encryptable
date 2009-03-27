@@ -1,2 +1,12 @@
-3-25-2009
+== 3-26-2009
+
+* Changed how encrypted data is saved, now put on separate column in the same table as encrypted model
+* Added tests
+* Can configure name of encrypted column
+* Added documentation
+* Log warning if default sample keys are being used while in production mode
+
+
+== 3-25-2009
+
 * Initial build

@@ -10,18 +10,32 @@ Run this if the gem isn't installed already
 
 Or place in your environment.rb
   config.gem 'ssoper-acts_as_encryptable', :source => 'http://gems.github.com'
-  
-After installing be sure to generate the migration for the EncryptedChunk model
-  ./script/generate migration acts_as_encryptable_migration
 
 
-== Usage
+== Configuration
 
-In your model
+After installing be sure to add a column to any tables that need to be encrypted
+  class AddEncryptionFieldsToCreditCards < ActiveRecord::Migration
+    def self.up
+      add_column :credit_cards, :encrypted, :text
+    end
+
+    def self.down
+      remove_column :credit_cards, :encrypted
+    end
+  end
+
+Or you can use the migration helper to generate the migration for the model
+  ./script/generate acts_as_encryptable_migration credit_cards
+
+And in your model
   class CreditCard < ActiveRecord::Base
     acts_as_encryptable :first_name, :last_name, :number
     attr_accessor :first_name, :last_name, :number
   end
+
+
+== Usage
 
 Encrypt your data
   card = CreditCard.new
@@ -35,3 +49,13 @@ Decrypt your data
   card.decrypt!
   => { :first_name => 'Test', :last_name => 'User', :number => '1234567890' }
 
+
+== Tests
+
+Run 'rake test'
+
+
+== Acknowledgements
+
+* Tobias Lütke for his blog post on asymmetric encryption using Ruby's native SSL libraries
+* Paul Barry for helping me to simplify the functionality

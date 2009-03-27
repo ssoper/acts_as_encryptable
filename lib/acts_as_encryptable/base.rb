@@ -1,5 +1,9 @@
 module ActsAsEncryptable
   module Base
+    WARNING_MSG = "\n  \e[0m\e[1;36m[\e[37mActsAsEncryptable\e[36m] \e[1;31mUsing the provided sample keys in production mode is highly discouraged. Generate your own RSA keys using the provided crypto libraries.\e[0m\n\n"
+    MAX_CHUNK_SIZE = 118
+    ENCRYPTED_CHUNK_SIZE = 175
+    
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -10,11 +14,20 @@ module ActsAsEncryptable
           has_many :encrypted_chunks, :as => :encryptable
           before_save :encrypt!
 
+          sample_key_public = File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key.pub')
+          sample_key_private = File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key')
+
           options = {
-            :public_key => File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key.pub'),
-            :private_key => File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key')
+            :public_key => sample_key_public,
+            :private_key => sample_key_private,
+            :column => :encrypted
           }
           options.merge!(args.pop) if args.last.is_a? Hash
+
+          if (sample_key_public == options[:public_key]) and 
+             (ENV['RAILS_ENV'] && ENV['RAILS_ENV'] == 'production')
+            RAILS_DEFAULT_LOGGER.warn WARNING_MSG
+          end
 
           write_inheritable_attribute(:encrypted_fields, args.uniq)
           class_inheritable_reader :encrypted_fields
@@ -25,38 +38,48 @@ module ActsAsEncryptable
           write_inheritable_attribute(:private_key, ActsAsEncryptable::Crypto::Key.from_file(options[:private_key]))
           class_inheritable_reader :private_key
 
-          write_inheritable_attribute(:max_chunk_size, 115)
-          class_inheritable_reader :max_chunk_size
+          write_inheritable_attribute(:encrypted_column, options[:column])
+          class_inheritable_reader :encrypted_column
 
           include ActsAsEncryptable::Base::InstanceMethods
+          extend ActsAsEncryptable::Base::SingletonMethods
         end
       end
     end
 
-    module InstanceMethods
+    module SingletonMethods
+      def chunkize(str, chunk_size)
+        (0..((str.length/chunk_size.to_f).ceil - 1)).each do |x|
+          start, stop = x * chunk_size, (x + 1) * chunk_size
+          start += 1 if start > 0
+          yield str[start..stop]
+        end
+      end
+    end
+
+    module InstanceMethods      
       def encrypt!
         yaml_data = self.class.encrypted_fields.inject({}) do |result, field|
           result.merge!(field => instance_variable_get("@#{field}".to_sym))
         end.to_yaml
 
-        chunks = []
-        (0..((yaml_data.length/self.class.max_chunk_size.to_f).ceil - 1)).each do |x|
-          start, stop = x * self.class.max_chunk_size, (x + 1) * self.class.max_chunk_size
-          start += 1 if start > 0
-          chunks << self.class.public_key.encrypt(yaml_data[start..stop])
+        chunks = ''
+        self.class.chunkize(yaml_data, MAX_CHUNK_SIZE) do |chunk|
+          chunks << self.class.public_key.encrypt(chunk)
         end
 
-        self.encrypted_chunks = chunks.collect do |chunk|
-          EncryptedChunk.new(:data => chunk)
-        end
+        self.send("#{self.class.encrypted_column}=", chunks)
       end
 
       def decrypt!
-        yaml_data = self.encrypted_chunks.collect do |chunk|
-          self.class.private_key.decrypt(chunk.data)
-        end.join
+        encrypted_data = self.send("#{self.class.encrypted_column}")
 
-        YAML::load(yaml_data).each do |k, v|
+        chunks = ''
+        self.class.chunkize(encrypted_data, ENCRYPTED_CHUNK_SIZE) do |chunk|
+          chunks << self.class.private_key.decrypt(chunk)
+        end
+
+        YAML::load(chunks).each do |k, v|
           instance_variable_set("@#{k}".to_sym, v)
         end
       end
