@@ -61,9 +61,9 @@ The gem comes with unit tests that use SQLite files stored in /tmp. You can run 
 == Acknowledgements
 
 * Paul Barry for helping simplify the functionality
-* Tobias Lütke for his blog post[link:http://blog.leetsoft.com/2006/03/14/simple-encryption] on asymmetric encryption using Ruby's native SSL libraries
+* Tobias Lütke for his {blog post}[http://blog.leetsoft.com/2006/03/14/simple-encryption] on asymmetric encryption using Ruby's native SSL libraries
 
 == Contact
 
-Feel free to contact me at sean.soper@gmail.com[link:mailto:sean.soper@gmail.com]
+Feel free to contact me at {sean.soper@gmail.com}[mailto:sean.soper@gmail.com]
 
