@@ -1,6 +1,8 @@
 = Acts As Encryptable
 
-Encrypt and decrypt your data using asymmetric keys
+While other encryption libraries require a separate column for each encrypted field, ActsAsEncryptable requires only one extra column per table. It works by mashing the fields to be encrypted into a YAML string and then breaking that into bite-sized chunks which are individually encrypted and munged together into an undecipherable string that is then stored in the database.
+
+Encryption and decryption is done with asymmetric keys using Ruby's OpenSSL libraries. While sample keys are provided for testing and development, it is highly recommended that you provide your own key pair for production use. The cryptographic library that comes with the gem can be used to generate them. Be sure to store your private key in a secure place as your data is only safe so long as your private key remains so.
 
 
 == Installation
@@ -28,7 +30,7 @@ After installing be sure to add a column to any tables that need to be encrypted
 Or you can use the migration helper to generate the migration for the model
   ./script/generate acts_as_encryptable_migration credit_cards
 
-And in your model
+In your model you will setup the virtual attributes to be encrypted and pass them to acts_as_encryptable
   class CreditCard < ActiveRecord::Base
     attr_accessor :first_name, :last_name, :number
     acts_as_encryptable :first_name, :last_name, :number
@@ -52,10 +54,16 @@ Decrypt your data
 
 == Tests
 
-  > rake test
+The gem comes with unit tests that use SQLite files stored in /tmp. You can run them with the test task.
+  rake test
 
 
 == Acknowledgements
 
-* Tobias Lütke for his blog post on asymmetric encryption using Ruby's native SSL libraries
 * Paul Barry for helping simplify the functionality
+* Tobias Lütke for his blog post[link:http://blog.leetsoft.com/2006/03/14/simple-encryption] on asymmetric encryption using Ruby's native SSL libraries
+
+== Contact
+
+Feel free to contact me at sean.soper@gmail.com[link:mailto:sean.soper@gmail.com]
+

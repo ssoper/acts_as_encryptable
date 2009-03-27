@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "acts_as_encryptable"
-  s.version = "1.0.4"
+  s.version = "1.0.5"
   s.date = "2009-03-27"
   s.author = "Sean Soper"
   s.email = "sean.soper@gmail.com"
