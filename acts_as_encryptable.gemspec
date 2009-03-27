@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = "acts_as_encryptable"
-  s.version = "1.0.2"
-  s.date = "2009-03-26"
+  s.version = "1.0.3"
+  s.date = "2009-03-27"
   s.author = "Sean Soper"
   s.email = "sean.soper@gmail.com"
   s.summary = "Encrypt and decrypt your data using asymmetric keys"
@@ -15,10 +15,12 @@ Gem::Specification.new do |s|
                 generators/acts_as_encryptable_migration/acts_as_encryptable_migration_generator.rb
                 sample_keys/rsa_key.pub
                 sample_keys/rsa_key
+                test/test_helper.rb
+                test/unit/base_test.rb
+                test/unit/crypto_test.rb
                 MIT-LICENSE
                 Rakefile
                 README.rdoc
-                TODO
                 Changelog }
   s.has_rdoc = true
   s.extra_rdoc_files = %w{ MIT-LICENSE
