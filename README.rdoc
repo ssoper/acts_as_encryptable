@@ -1,12 +1,12 @@
 = Acts As Encryptable
 
-Encrypt and decrypt your data with ease.
+Encrypt and decrypt your data using asymmetric keys
 
 
 == Installation
 
 Run this if the gem isn't installed already
-  sudo gem install ssoper-acts_as_encryptable --source=http://gems.github.com
+  gem install ssoper-acts_as_encryptable --source=http://gems.github.com
 
 Or place in your environment.rb
   config.gem 'ssoper-acts_as_encryptable', :source => 'http://gems.github.com'
@@ -30,8 +30,8 @@ Or you can use the migration helper to generate the migration for the model
 
 And in your model
   class CreditCard < ActiveRecord::Base
-    acts_as_encryptable :first_name, :last_name, :number
     attr_accessor :first_name, :last_name, :number
+    acts_as_encryptable :first_name, :last_name, :number
   end
 
 
@@ -52,10 +52,10 @@ Decrypt your data
 
 == Tests
 
-Run 'rake test'
+  > rake test
 
 
 == Acknowledgements
 
 * Tobias Lütke for his blog post on asymmetric encryption using Ruby's native SSL libraries
-* Paul Barry for helping me to simplify the functionality
+* Paul Barry for helping simplify the functionality

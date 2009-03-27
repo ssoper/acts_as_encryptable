@@ -1,11 +1,11 @@
 Gem::Specification.new do |s|
   s.name = "acts_as_encryptable"
-  s.version = "1.0.1"
+  s.version = "1.0.2"
   s.date = "2009-03-26"
   s.author = "Sean Soper"
   s.email = "sean.soper@gmail.com"
-  s.summary = "Encrypt and decrypt your data with ease"
-  s.description = "Encrypt and decrypt your data using 1024-bit asymmetric RSA keys"
+  s.summary = "Encrypt and decrypt your data using asymmetric keys"
+  s.description = "Allow your models to encrypt an arbitrary amount of data using asymmetric keys"
   s.homepage = "http://github.com/ssoper/acts_as_encryptable"
   s.require_path = "lib"
   s.files = %w{ acts_as_encryptable.gemspec
