@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = "acts_as_encryptable"
-  s.version = "1.0.6"
-  s.date = "2009-03-27"
+  s.version = "1.0.7"
+  s.date = "2009-03-28"
   s.author = "Sean Soper"
   s.email = "sean.soper@gmail.com"
   s.summary = "Encrypt and decrypt your data using asymmetric keys"

@@ -11,7 +11,7 @@ Run this if the gem isn't installed already
   gem install ssoper-acts_as_encryptable --source=http://gems.github.com
 
 Or place in your environment.rb
-  config.gem 'ssoper-acts_as_encryptable', :source => 'http://gems.github.com'
+  config.gem 'ssoper-acts_as_encryptable', :lib => 'acts_as_encryptable', :source => 'http://gems.github.com'
 
 
 == Configuration
