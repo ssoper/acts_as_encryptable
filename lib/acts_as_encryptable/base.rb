@@ -1,7 +1,7 @@
 module ActsAsEncryptable
   module Base
     WARNING_MSG = "\n  \e[0m\e[1;36m[\e[37mActsAsEncryptable\e[36m] \e[1;31mUsing the provided sample keys in production mode is highly discouraged. Generate your own RSA keys using the provided crypto libraries.\e[0m\n\n"
-    MAX_CHUNK_SIZE = 118
+    MAX_CHUNK_SIZE = 115
     ENCRYPTED_CHUNK_SIZE = 175
     
     def self.included(base)
@@ -11,9 +11,8 @@ module ActsAsEncryptable
     module ClassMethods
       def acts_as_encryptable(*args)
         self.class_eval do
-          has_many :encrypted_chunks, :as => :encryptable
           before_save :encrypt!
-
+          
           sample_key_public = File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key.pub')
           sample_key_private = File.join(File.dirname(__FILE__), '/../../sample_keys/rsa_key')
 
@@ -28,6 +27,8 @@ module ActsAsEncryptable
              (ENV['RAILS_ENV'] && ENV['RAILS_ENV'] == 'production')
             RAILS_DEFAULT_LOGGER.warn WARNING_MSG
           end
+
+          args = args.first if args.first.is_a? Array
 
           write_inheritable_attribute(:encrypted_fields, args.uniq)
           class_inheritable_reader :encrypted_fields
@@ -51,13 +52,12 @@ module ActsAsEncryptable
       def chunkize(str, chunk_size)
         (0..((str.length/chunk_size.to_f).ceil - 1)).each do |x|
           start, stop = x * chunk_size, (x + 1) * chunk_size
-          start += 1 if start > 0
-          yield str[start..stop]
+          yield str[start,stop]
         end
       end
     end
 
-    module InstanceMethods      
+    module InstanceMethods
       def encrypt!
         yaml_data = self.class.encrypted_fields.inject({}) do |result, field|
           result.merge!(field => instance_variable_get("@#{field}".to_sym))
